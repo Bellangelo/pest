@@ -1,6 +1,6 @@
 {
-    "name": "bellangelo/pest",
-    "description": "The elegant PHP Testing Framework made run for php7.4.",
+    "name": "bellangelo/pest-php74",
+    "description": "The elegant PHP Testing Framework transpiled to PHP 7.4.",
     "keywords": [
         "php",
         "framework",

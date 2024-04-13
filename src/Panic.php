@@ -14,18 +14,24 @@ use Whoops\Exception\Inspector;
 final class Panic
 {
     /**
+     * @readonly
+     */
+    private Throwable $throwable;
+    /**
      * Creates a new Panic instance.
      */
     private function __construct(
-        private readonly Throwable $throwable
+        Throwable $throwable
     ) {
+        $this->throwable = $throwable;
         // ...
     }
 
     /**
      * Creates a new Panic instance, and exits the application.
+     * @return never
      */
-    public static function with(Throwable $throwable): never
+    public static function with(Throwable $throwable)
     {
         $panic = new self($throwable);
 
@@ -41,7 +47,7 @@ final class Panic
     {
         try {
             $output = Container::getInstance()->get(OutputInterface::class);
-        } catch (Throwable) { // @phpstan-ignore-line
+        } catch (Throwable $exception) { // @phpstan-ignore-line
             $output = new ConsoleOutput();
         }
 

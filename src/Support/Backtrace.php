@@ -115,11 +115,11 @@ final class Backtrace
                 continue;
             }
 
-            if (($GLOBALS['__PEST_INTERNAL_TEST_SUITE'] ?? false) && str_contains($trace['file'], 'pest'.DIRECTORY_SEPARATOR.'src')) {
+            if (($GLOBALS['__PEST_INTERNAL_TEST_SUITE'] ?? false) && strpos($trace['file'], 'pest'.DIRECTORY_SEPARATOR.'src') !== false) {
                 continue;
             }
 
-            if (str_contains($trace['file'], DIRECTORY_SEPARATOR.'pestphp'.DIRECTORY_SEPARATOR.'pest'.DIRECTORY_SEPARATOR.'src')) {
+            if (strpos($trace['file'], DIRECTORY_SEPARATOR.'pestphp'.DIRECTORY_SEPARATOR.'pest'.DIRECTORY_SEPARATOR.'src') !== false) {
                 continue;
             }
 

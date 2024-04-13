@@ -25,6 +25,6 @@ final class CleanConsoleOutput extends ConsoleOutput
      */
     private function isOpeningHeadline(string $message): bool
     {
-        return str_contains($message, 'by Sebastian Bergmann and contributors.');
+        return strpos($message, 'by Sebastian Bergmann and contributors.') !== false;
     }
 }

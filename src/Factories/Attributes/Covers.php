@@ -29,7 +29,7 @@ final class Covers extends Attribute
         foreach ($method->covers as $covering) {
             if ($covering instanceof CoversClass) {
                 // Prepend a backslash for FQN classes
-                if (str_contains($covering->class, '\\')) {
+                if (strpos($covering->class, '\\') !== false) {
                     $covering->class = '\\'.$covering->class;
                 }
 

@@ -46,16 +46,31 @@ final class CompactPrinter
         'E' => ['red', '⨯'],
         'F' => ['red', '⨯'],
     ];
-
+    /**
+     * @readonly
+     */
+    private Terminal $terminal;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
+    /**
+     * @readonly
+     */
+    private Style $style;
+    /**
+     * @readonly
+     */
+    private int $compactSymbolsPerLine;
     /**
      * Creates a new instance of the Compact Printer.
      */
-    public function __construct(
-        private readonly Terminal $terminal,
-        private readonly OutputInterface $output,
-        private readonly Style $style,
-        private readonly int $compactSymbolsPerLine,
-    ) {
+    public function __construct(Terminal $terminal, OutputInterface $output, Style $style, int $compactSymbolsPerLine)
+    {
+        $this->terminal = $terminal;
+        $this->output = $output;
+        $this->style = $style;
+        $this->compactSymbolsPerLine = $compactSymbolsPerLine;
         // ..
     }
 
@@ -66,8 +81,8 @@ final class CompactPrinter
     {
         return new self(
             terminal(),
-            new ConsoleOutput(decorated: true),
-            new Style(new ConsoleOutput(decorated: true)),
+            new ConsoleOutput(32, true),
+            new Style(new ConsoleOutput(32, true)),
             terminal()->width() - 4,
         );
     }

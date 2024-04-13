@@ -96,7 +96,7 @@ final class Laravel implements HandlesArguments
     private function ensureRunner(array $arguments): array
     {
         foreach ($arguments as $value) {
-            if (str_starts_with($value, '--runner')) {
+            if (strncmp($value, '--runner', strlen('--runner')) === 0) {
                 $arguments = $this->popArgument($value, $arguments);
             }
         }

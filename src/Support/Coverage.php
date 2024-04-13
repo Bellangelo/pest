@@ -161,10 +161,10 @@ final class Coverage
      * ```
      *
      *
-     * @param  File  $file
+     * @param mixed $file
      * @return array<int, string>
      */
-    public static function getMissingCoverage(mixed $file): array
+    public static function getMissingCoverage($file): array
     {
         $shouldBeNewLine = true;
 
@@ -184,7 +184,7 @@ final class Coverage
 
             $lastKey = count($array) - 1;
 
-            if (array_key_exists($lastKey, $array) && str_contains((string) $array[$lastKey], '..')) {
+            if (array_key_exists($lastKey, $array) && strpos((string) $array[$lastKey], '..') !== false) {
                 [$from] = explode('..', (string) $array[$lastKey]);
                 $array[$lastKey] = $line > $from ? sprintf('%s..%s', $from, $line) : sprintf('%s..%s', $line, $from);
 

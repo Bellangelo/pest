@@ -14,14 +14,21 @@ final class SnapshotRepository
 {
     /** @var array<string, int> */
     private static array $expectationsCounter = [];
-
+    /**
+     * @readonly
+     */
+    private string $testsPath;
+    /**
+     * @readonly
+     */
+    private string $snapshotsPath;
     /**
      * Creates a snapshot repository instance.
      */
-    public function __construct(
-        readonly private string $testsPath,
-        readonly private string $snapshotsPath,
-    ) {
+    public function __construct(string $testsPath, string $snapshotsPath)
+    {
+        $this->testsPath = $testsPath;
+        $this->snapshotsPath = $snapshotsPath;
     }
 
     /**

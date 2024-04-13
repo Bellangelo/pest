@@ -53,17 +53,32 @@ final class TeamCityLogger
      * @var array<string, bool>
      */
     private array $testEvents = [];
-
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
+    /**
+     * @readonly
+     */
+    private Converter $converter;
+    /**
+     * @readonly
+     */
+    private ?int $flowId;
+    /**
+     * @readonly
+     */
+    private bool $withoutDuration;
     /**
      * @throws EventFacadeIsSealedException
      * @throws UnknownSubscriberTypeException
      */
-    public function __construct(
-        private readonly OutputInterface $output,
-        private readonly Converter $converter,
-        private readonly ?int $flowId,
-        private readonly bool $withoutDuration,
-    ) {
+    public function __construct(OutputInterface $output, Converter $converter, ?int $flowId, bool $withoutDuration)
+    {
+        $this->output = $output;
+        $this->converter = $converter;
+        $this->flowId = $flowId;
+        $this->withoutDuration = $withoutDuration;
         $this->registerSubscribers();
         $this->setFlowId();
     }
@@ -108,7 +123,10 @@ final class TeamCityLogger
         $this->time = $event->telemetryInfo()->time();
     }
 
-    public function testMarkedIncomplete(MarkedIncomplete $event): never
+    /**
+     * @return never
+     */
+    public function testMarkedIncomplete(MarkedIncomplete $event)
     {
         throw ShouldNotHappen::fromMessage('testMarkedIncomplete not implemented.');
     }

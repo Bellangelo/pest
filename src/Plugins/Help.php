@@ -17,13 +17,18 @@ use function Pest\version;
 final class Help implements HandlesArguments
 {
     use Concerns\HandleArguments;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
 
     /**
      * Creates a new Plugin instance.
      */
     public function __construct(
-        private readonly OutputInterface $output
+        OutputInterface $output
     ) {
+        $this->output = $output;
         // ..
     }
 
@@ -105,8 +110,7 @@ final class Help implements HandlesArguments
             'arg' => '--init',
             'desc' => 'Initialise a standard Pest configuration',
         ]], ...$content['Configuration']];
-
-        $content['Execution'] = [...[
+        $item0Unpacked = [
             [
                 'arg' => '--parallel',
                 'desc' => 'Run tests in parallel',
@@ -115,9 +119,13 @@ final class Help implements HandlesArguments
                 'arg' => '--update-snapshots',
                 'desc' => 'Update snapshots for tests using the "toMatchSnapshot" expectation',
             ],
-        ], ...$content['Execution']];
+        ];
+        $item1Unpacked = $content['Execution'];
 
-        $content['Selection'] = [[
+        $content['Execution'] = array_merge($item0Unpacked, is_array($item1Unpacked) ? $item1Unpacked : iterator_to_array($item1Unpacked));
+        $item2Unpacked = $content['Selection'];
+
+        $content['Selection'] = array_merge([[
             'arg' => '--bail',
             'desc' => 'Stop execution upon first not-passed test',
         ], [
@@ -126,7 +134,7 @@ final class Help implements HandlesArguments
         ], [
             'arg' => '--retry',
             'desc' => 'Run non-passing tests first and stop execution upon first error or failure',
-        ], ...$content['Selection']];
+        ]], is_array($item2Unpacked) ? $item2Unpacked : iterator_to_array($item2Unpacked));
 
         $content['Reporting'] = [...$content['Reporting'], ...[
             [
@@ -134,14 +142,15 @@ final class Help implements HandlesArguments
                 'desc' => 'Replace default result output with Compact format',
             ],
         ]];
+        $item3Unpacked = $content['Code Coverage'];
 
-        $content['Code Coverage'] = [[
+        $content['Code Coverage'] = array_merge([[
             'arg' => '--coverage ',
             'desc' => 'Generate code coverage report and output to standard output',
         ], [
             'arg' => '--coverage --min',
             'desc' => 'Set the minimum required coverage percentage, and fail if not met',
-        ], ...$content['Code Coverage']];
+        ]], is_array($item3Unpacked) ? $item3Unpacked : iterator_to_array($item3Unpacked));
 
         $content['Profiling'] = [
             [

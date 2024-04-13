@@ -63,19 +63,20 @@ final class TestCaseMethodFactory
      * @var array<int, \Pest\Factories\Covers\CoversClass|\Pest\Factories\Covers\CoversFunction|\Pest\Factories\Covers\CoversNothing>
      */
     public array $covers = [];
-
+    public string $filename;
+    public ?string $description;
+    public ?Closure $closure;
     /**
      * Creates a new test case method factory instance.
      */
-    public function __construct(
-        public string $filename,
-        public ?string $description,
-        public ?Closure $closure,
-    ) {
+    public function __construct(string $filename, ?string $description, ?Closure $closure)
+    {
+        $this->filename = $filename;
+        $this->description = $description;
+        $this->closure = $closure;
         $this->closure ??= function (): void {
             (Assert::getCount() > 0 || $this->doesNotPerformAssertions()) ?: self::markTestIncomplete(); // @phpstan-ignore-line
         };
-
         $this->bootHigherOrderable();
     }
 
@@ -99,7 +100,7 @@ final class TestCaseMethodFactory
 
         $method = $this;
 
-        return function () use ($testCase, $method, $closure): mixed { // @phpstan-ignore-line
+        return function () use ($testCase, $method, $closure) { // @phpstan-ignore-line
             /* @var TestCase $this */
             $testCase->proxies->proxy($this);
             $method->proxies->proxy($this);

@@ -13,10 +13,15 @@ use Pest\Expectation;
 final class HigherOrderCallables
 {
     /**
+     * @readonly
+     */
+    private object $target;
+    /**
      * Creates a new Higher Order Callables instances.
      */
-    public function __construct(private readonly object $target)
+    public function __construct(object $target)
     {
+        $this->target = $target;
         // ..
     }
 
@@ -25,10 +30,10 @@ final class HigherOrderCallables
      *
      * Create a new expectation. Callable values will be executed prior to returning the new expectation.
      *
-     * @param  (Closure():TValue)|TValue  $value
+     * @param mixed $value
      * @return Expectation<TValue>
      */
-    public function expect(mixed $value): Expectation
+    public function expect($value): Expectation
     {
         /** @var TValue $value */
         $value = $value instanceof Closure ? Reflection::bindCallableWithData($value) : $value;
@@ -41,10 +46,10 @@ final class HigherOrderCallables
      *
      * Create a new expectation. Callable values will be executed prior to returning the new expectation.
      *
-     * @param  callable|TValue  $value
+     * @param mixed $value
      * @return Expectation<(callable(): mixed)|TValue>
      */
-    public function and(mixed $value): Expectation
+    public function and($value): Expectation
     {
         return $this->expect($value);
     }

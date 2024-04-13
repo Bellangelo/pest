@@ -18,15 +18,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class EnsureTeamCityEnabled implements ConfiguredSubscriber
 {
     /**
+     * @readonly
+     */
+    private InputInterface $input;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
+    /**
+     * @readonly
+     */
+    private TestSuite $testSuite;
+    /**
      * Creates a new Configured Subscriber instance.
      */
-    public function __construct(
-        private readonly InputInterface $input,
-        private readonly OutputInterface $output,
-        private readonly TestSuite $testSuite,
-    ) {
+    public function __construct(InputInterface $input, OutputInterface $output, TestSuite $testSuite)
+    {
+        $this->input = $input;
+        $this->output = $output;
+        $this->testSuite = $testSuite;
     }
-
     /**
      * Runs the subscriber.
      */

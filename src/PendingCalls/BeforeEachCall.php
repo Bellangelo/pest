@@ -21,27 +21,40 @@ final class BeforeEachCall
 
     /**
      * Holds the before each closure.
+     * @readonly
      */
-    private readonly Closure $closure;
+    private Closure $closure;
 
     /**
      * The test call proxies.
+     * @readonly
      */
-    private readonly HigherOrderMessageCollection $testCallProxies;
+    private HigherOrderMessageCollection $testCallProxies;
 
     /**
      * The test case proxies.
+     * @readonly
      */
-    private readonly HigherOrderMessageCollection $testCaseProxies;
+    private HigherOrderMessageCollection $testCaseProxies;
+    /**
+     * @readonly
+     */
+    public TestSuite $testSuite;
+    /**
+     * @readonly
+     */
+    private string $filename;
 
     /**
      * Creates a new Pending Call.
      */
     public function __construct(
-        public readonly TestSuite $testSuite,
-        private readonly string $filename,
+        TestSuite $testSuite,
+        string $filename,
         ?Closure $closure = null
     ) {
+        $this->testSuite = $testSuite;
+        $this->filename = $filename;
         $this->closure = $closure instanceof Closure ? $closure : NullClosure::create();
 
         $this->testCallProxies = new HigherOrderMessageCollection();

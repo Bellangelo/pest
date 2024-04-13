@@ -13,8 +13,9 @@ final class Arr
      * Checks if the given array has the given key.
      *
      * @param  array<array-key, mixed>  $array
+     * @param string|int $key
      */
-    public static function has(array $array, string|int $key): bool
+    public static function has(array $array, $key): bool
     {
         $key = (string) $key;
 
@@ -37,8 +38,11 @@ final class Arr
      * Gets the given key value.
      *
      * @param  array<array-key, mixed>  $array
+     * @param string|int $key
+     * @param mixed $default
+     * @return mixed
      */
-    public static function get(array $array, string|int $key, mixed $default = null): mixed
+    public static function get(array $array, $key, $default = null)
     {
         $key = (string) $key;
 
@@ -46,7 +50,7 @@ final class Arr
             return $array[$key];
         }
 
-        if (! str_contains($key, '.')) {
+        if (strpos($key, '.') === false) {
             return $array[$key] ?? $default;
         }
 

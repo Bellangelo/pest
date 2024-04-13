@@ -13,13 +13,16 @@ final class KernelDump
      * The output buffer, if any.
      */
     private string $buffer = '';
-
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
     /**
      * Creates a new Kernel Dump instance.
      */
-    public function __construct(
-        private readonly OutputInterface $output,
-    ) {
+    public function __construct(OutputInterface $output)
+    {
+        $this->output = $output;
         // ...
     }
 
@@ -99,7 +102,7 @@ final class KernelDump
      */
     private function isOpeningHeadline(string $output): bool
     {
-        return str_contains($output, 'by Sebastian Bergmann and contributors.');
+        return strpos($output, 'by Sebastian Bergmann and contributors.') !== false;
     }
 
     /**
@@ -107,7 +110,7 @@ final class KernelDump
      */
     private function isInternalError(string $output): bool
     {
-        return str_contains($output, 'An error occurred inside PHPUnit.')
-            || str_contains($output, 'Fatal error');
+        return strpos($output, 'An error occurred inside PHPUnit.') !== false
+            || strpos($output, 'Fatal error') !== false;
     }
 }

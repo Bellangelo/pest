@@ -48,9 +48,15 @@ final class WrapperRunner implements RunnerInterface
 {
     private const CYCLE_SLEEP = 10000;
 
-    private readonly ResultPrinter $printer;
+    /**
+     * @readonly
+     */
+    private ResultPrinter $printer;
 
-    private readonly Timer $timer;
+    /**
+     * @readonly
+     */
+    private Timer $timer;
 
     /** @var list<non-empty-string> */
     private array $pending = [];
@@ -81,15 +87,26 @@ final class WrapperRunner implements RunnerInterface
     /** @var list<SplFileInfo> */
     private array $testdoxFiles = [];
 
-    /** @var non-empty-string[] */
-    private readonly array $parameters;
+    /** @var non-empty-string[]
+     * @readonly */
+    private array $parameters;
 
     private CodeCoverageFilterRegistry $codeCoverageFilterRegistry;
+    /**
+     * @readonly
+     */
+    private Options $options;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
 
     public function __construct(
-        private readonly Options $options,
-        private readonly OutputInterface $output
+        Options $options,
+        OutputInterface $output
     ) {
+        $this->options = $options;
+        $this->output = $output;
         $this->printer = new ResultPrinter($output, $options);
         $this->timer = new Timer();
 
@@ -317,7 +334,7 @@ final class WrapperRunner implements RunnerInterface
             $testResultSum->testRunnerTriggeredDeprecationEvents(),
             array_values(array_filter(
                 $testResultSum->testRunnerTriggeredWarningEvents(),
-                fn (WarningTriggered $event): bool => ! str_contains($event->message(), 'No tests found')
+                fn (WarningTriggered $event): bool => strpos($event->message(), 'No tests found') === false
             )),
             $testResultSum->errors(),
             $testResultSum->deprecations(),
@@ -419,7 +436,7 @@ final class WrapperRunner implements RunnerInterface
         $files = [
             ...array_values(array_filter(
                 $suiteLoader->tests,
-                fn (string $filename): bool => ! str_ends_with($filename, "eval()'d code")
+                fn (string $filename): bool => substr_compare($filename, "eval()'d code", -strlen("eval()'d code")) !== 0
             )),
             ...TestSuite::getInstance()->tests->getFilenames(),
         ];

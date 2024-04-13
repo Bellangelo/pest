@@ -200,7 +200,7 @@ trait Testable
             preg_match('/\((.*?)\)/', $description, $matches);
 
             if (count($matches) > 1) {
-                if (str_contains($description, 'with '.$matches[0].' /')) {
+                if (strpos($description, 'with '.$matches[0].' /') !== false) {
                     $description = str_replace('with '.$matches[0].' /', '', $description);
                 } else {
                     $description = str_replace('with '.$matches[0], '', $description);
@@ -245,8 +245,9 @@ trait Testable
      * Executes the Test Case current test.
      *
      * @throws Throwable
+     * @return mixed
      */
-    private function __runTest(Closure $closure, ...$args): mixed
+    private function __runTest(Closure $closure, ...$args)
     {
         $arguments = $this->__resolveTestArguments($args);
         $this->__ensureDatasetArgumentNumberMatches($arguments);
@@ -331,10 +332,11 @@ trait Testable
 
     /**
      * @throws Throwable
+     * @return mixed
      */
-    private function __callClosure(Closure $closure, array $arguments): mixed
+    private function __callClosure(Closure $closure, array $arguments)
     {
-        return ExceptionTrace::ensure(fn (): mixed => call_user_func_array(Closure::bind($closure, $this, $this::class), $arguments));
+        return ExceptionTrace::ensure(fn () => call_user_func_array(Closure::bind($closure, $this, get_class($this)), $arguments));
     }
 
     /** @postCondition */

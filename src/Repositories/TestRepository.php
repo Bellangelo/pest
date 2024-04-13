@@ -81,11 +81,13 @@ final class TestRepository
 
         foreach ($paths as $path) {
             if (array_key_exists($path, $this->uses)) {
+                $item0Unpacked = $this->uses[$path][2][$index] ?? [];
+                $item1Unpacked = $hooks[$index] ?? [];
                 $this->uses[$path] = [
                     [...$this->uses[$path][0], ...$classOrTraits],
                     [...$this->uses[$path][1], ...$groups],
                     array_map(
-                        fn (int $index): array => [...$this->uses[$path][2][$index] ?? [], ...($hooks[$index] ?? [])],
+                        fn (int $index): array => array_merge($item0Unpacked, is_array($item1Unpacked) ? $item1Unpacked : iterator_to_array($item1Unpacked)),
                         range(0, 3),
                     ),
                 ];

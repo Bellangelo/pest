@@ -9,7 +9,9 @@ namespace Pest\Factories\Covers;
  */
 final class CoversFunction
 {
-    public function __construct(public string $function)
+    public string $function;
+    public function __construct(string $function)
     {
+        $this->function = $function;
     }
 }

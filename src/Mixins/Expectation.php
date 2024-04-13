@@ -40,15 +40,20 @@ final class Expectation
      * The exporter instance, if any.
      */
     private ?Exporter $exporter = null;
+    /**
+     * @var TValue
+     */
+    public $value;
 
     /**
      * Creates a new expectation.
      *
-     * @param  TValue  $value
+     * @param mixed $value
      */
     public function __construct(
-        public mixed $value
+        $value
     ) {
+        $this->value = $value;
         // ..
     }
 
@@ -58,8 +63,9 @@ final class Expectation
      * variables reference the same object.
      *
      * @return self<TValue>
+     * @param mixed $expected
      */
-    public function toBe(mixed $expected, string $message = ''): self
+    public function toBe($expected, string $message = ''): self
     {
         Assert::assertSame($expected, $this->value, $message);
 
@@ -130,8 +136,9 @@ final class Expectation
      * Asserts that the value is greater than $expected.
      *
      * @return self<TValue>
+     * @param int|float|string|\DateTimeInterface $expected
      */
-    public function toBeGreaterThan(int|float|string|DateTimeInterface $expected, string $message = ''): self
+    public function toBeGreaterThan($expected, string $message = ''): self
     {
         Assert::assertGreaterThan($expected, $this->value, $message);
 
@@ -142,8 +149,9 @@ final class Expectation
      * Asserts that the value is greater than or equal to $expected.
      *
      * @return self<TValue>
+     * @param int|float|string|\DateTimeInterface $expected
      */
-    public function toBeGreaterThanOrEqual(int|float|string|DateTimeInterface $expected, string $message = ''): self
+    public function toBeGreaterThanOrEqual($expected, string $message = ''): self
     {
         Assert::assertGreaterThanOrEqual($expected, $this->value, $message);
 
@@ -154,8 +162,9 @@ final class Expectation
      * Asserts that the value is less than or equal to $expected.
      *
      * @return self<TValue>
+     * @param int|float|string|\DateTimeInterface $expected
      */
-    public function toBeLessThan(int|float|string|DateTimeInterface $expected, string $message = ''): self
+    public function toBeLessThan($expected, string $message = ''): self
     {
         Assert::assertLessThan($expected, $this->value, $message);
 
@@ -166,8 +175,9 @@ final class Expectation
      * Asserts that the value is less than $expected.
      *
      * @return self<TValue>
+     * @param int|float|string|\DateTimeInterface $expected
      */
-    public function toBeLessThanOrEqual(int|float|string|DateTimeInterface $expected, string $message = ''): self
+    public function toBeLessThanOrEqual($expected, string $message = ''): self
     {
         Assert::assertLessThanOrEqual($expected, $this->value, $message);
 
@@ -178,8 +188,9 @@ final class Expectation
      * Asserts that $needle is an element of the value.
      *
      * @return self<TValue>
+     * @param mixed ...$needles
      */
-    public function toContain(mixed ...$needles): self
+    public function toContain(...$needles): self
     {
         foreach ($needles as $needle) {
             if (is_string($this->value)) {
@@ -200,8 +211,9 @@ final class Expectation
      * Asserts that $needle equal an element of the value.
      *
      * @return self<TValue>
+     * @param mixed ...$needles
      */
-    public function toContainEqual(mixed ...$needles): self
+    public function toContainEqual(...$needles): self
     {
         if (! is_iterable($this->value)) {
             InvalidExpectationValue::expected('iterable');
@@ -298,7 +310,7 @@ final class Expectation
      * @param  Countable|iterable<mixed>  $expected
      * @return self<TValue>
      */
-    public function toHaveSameSize(Countable|iterable $expected, string $message = ''): self
+    public function toHaveSameSize($expected, string $message = ''): self
     {
         if (! is_countable($this->value) && ! is_iterable($this->value)) {
             InvalidExpectationValue::expected('countable|iterable');
@@ -313,9 +325,16 @@ final class Expectation
      * Asserts that the value contains the property $name.
      *
      * @return self<TValue>
+     * @param mixed $value
      */
-    public function toHaveProperty(string $name, mixed $value = new Any(), string $message = ''): self
+    public function toHaveProperty(string $name, $value = null, string $message = null): self
     {
+        $value ??= null;
+        $message ??= null;
+        $value ??= null;
+        $message ??= null;
+        $value ??= new Any();
+        $message ??= '';
         $this->toBeObject();
 
         // @phpstan-ignore-next-line
@@ -338,7 +357,7 @@ final class Expectation
     public function toHaveProperties(iterable $names, string $message = ''): self
     {
         foreach ($names as $name => $value) {
-            is_int($name) ? $this->toHaveProperty($value, message: $message) : $this->toHaveProperty($name, $value, $message); // @phpstan-ignore-line
+            is_int($name) ? $this->toHaveProperty($value, null, $message) : $this->toHaveProperty($name, $value, $message); // @phpstan-ignore-line
         }
 
         return $this;
@@ -368,7 +387,7 @@ final class Expectation
     public function toHaveMethods(iterable $names, string $message = ''): self
     {
         foreach ($names as $name) {
-            $this->toHaveMethod($name, message: $message);
+            $this->toHaveMethod($name, $message);
         }
 
         return $this;
@@ -378,8 +397,9 @@ final class Expectation
      * Asserts that two variables have the same value.
      *
      * @return self<TValue>
+     * @param mixed $expected
      */
-    public function toEqual(mixed $expected, string $message = ''): self
+    public function toEqual($expected, string $message = ''): self
     {
         Assert::assertEquals($expected, $this->value, $message);
 
@@ -396,8 +416,9 @@ final class Expectation
      * private, protected and public attributes.
      *
      * @return self<TValue>
+     * @param mixed $expected
      */
-    public function toEqualCanonicalizing(mixed $expected, string $message = ''): self
+    public function toEqualCanonicalizing($expected, string $message = ''): self
     {
         Assert::assertEqualsCanonicalizing($expected, $this->value, $message);
 
@@ -409,8 +430,9 @@ final class Expectation
      * is lower than $delta.
      *
      * @return self<TValue>
+     * @param mixed $expected
      */
-    public function toEqualWithDelta(mixed $expected, float $delta, string $message = ''): self
+    public function toEqualWithDelta($expected, float $delta, string $message = ''): self
     {
         Assert::assertEqualsWithDelta($expected, $this->value, $delta, $message);
 
@@ -641,9 +663,13 @@ final class Expectation
      * Asserts that the value array has the provided $key.
      *
      * @return self<TValue>
+     * @param string|int $key
+     * @param mixed $value
      */
-    public function toHaveKey(string|int $key, mixed $value = new Any(), string $message = ''): self
+    public function toHaveKey($key, $value = null, string $message = null): self
     {
+        $value ??= new Any();
+        $message ??= '';
         if (is_object($this->value) && method_exists($this->value, 'toArray')) {
             $array = $this->value->toArray();
         } else {
@@ -681,7 +707,7 @@ final class Expectation
             if (is_array($key)) {
                 $this->toHaveKeys(array_keys(Arr::dot($key, $k.'.')), $message);
             } else {
-                $this->toHaveKey($key, message: $message);
+                $this->toHaveKey($key, null, $message);
             }
         }
 
@@ -860,18 +886,38 @@ final class Expectation
         $testCase = TestSuite::getInstance()->test;
         assert($testCase instanceof TestCase);
 
-        $string = match (true) {
-            is_string($this->value) => $this->value,
-            is_object($this->value) && method_exists($this->value, 'toSnapshot') => $this->value->toSnapshot(),
-            is_object($this->value) && method_exists($this->value, '__toString') => $this->value->__toString(),
-            is_object($this->value) && method_exists($this->value, 'toString') => $this->value->toString(),
-            $this->value instanceof \Illuminate\Testing\TestResponse => $this->value->getContent(), // @phpstan-ignore-line
-            is_array($this->value) => json_encode($this->value, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
-            $this->value instanceof Traversable => json_encode(iterator_to_array($this->value), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
-            $this->value instanceof JsonSerializable => json_encode($this->value->jsonSerialize(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
-            is_object($this->value) && method_exists($this->value, 'toArray') => json_encode($this->value->toArray(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
-            default => InvalidExpectationValue::expected('array|object|string'),
-        };
+        switch (true) {
+            case is_string($this->value):
+                $string = $this->value;
+                break;
+            case is_object($this->value) && method_exists($this->value, 'toSnapshot'):
+                $string = $this->value->toSnapshot();
+                break;
+            case is_object($this->value) && method_exists($this->value, '__toString'):
+                $string = $this->value->__toString();
+                break;
+            case is_object($this->value) && method_exists($this->value, 'toString'):
+                $string = $this->value->toString();
+                break;
+            case $this->value instanceof \Illuminate\Testing\TestResponse:
+                $string = $this->value->getContent();
+                break;
+            case is_array($this->value):
+                $string = json_encode($this->value, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+                break;
+            case $this->value instanceof Traversable:
+                $string = json_encode(iterator_to_array($this->value), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+                break;
+            case $this->value instanceof JsonSerializable:
+                $string = json_encode($this->value->jsonSerialize(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+                break;
+            case is_object($this->value) && method_exists($this->value, 'toArray'):
+                $string = json_encode($this->value->toArray(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+                break;
+            default:
+                $string = InvalidExpectationValue::expected('array|object|string');
+                break;
+        }
 
         if ($snapshots->has()) {
             [$filename, $content] = $snapshots->get();
@@ -938,7 +984,7 @@ final class Expectation
      * @param  (Closure(Throwable): mixed)|string  $exception
      * @return self<TValue>
      */
-    public function toThrow(callable|string|Throwable $exception, ?string $exceptionMessage = null, string $message = ''): self
+    public function toThrow($exception, ?string $exceptionMessage = null, string $message = ''): self
     {
         $callback = NullClosure::create();
 
@@ -963,7 +1009,7 @@ final class Expectation
 
             if ($exception instanceof Throwable) {
                 expect($e)
-                    ->toBeInstanceOf($exception::class, $message)
+                    ->toBeInstanceOf(get_class($exception), $message)
                     ->and($e->getMessage())->toBe($exceptionMessage ?? $exception->getMessage(), $message);
 
                 return $this;
@@ -1003,8 +1049,9 @@ final class Expectation
 
     /**
      * Exports the given value.
+     * @param mixed $value
      */
-    private function export(mixed $value): string
+    private function export($value): string
     {
         if (! $this->exporter instanceof \Pest\Support\Exporter) {
             $this->exporter = Exporter::default();
@@ -1153,8 +1200,10 @@ final class Expectation
      * Asserts that the value is between 2 specified values
      *
      * @return self<TValue>
+     * @param int|float|\DateTimeInterface $lowestValue
+     * @param int|float|\DateTimeInterface $highestValue
      */
-    public function toBeBetween(int|float|DateTimeInterface $lowestValue, int|float|DateTimeInterface $highestValue, string $message = ''): self
+    public function toBeBetween($lowestValue, $highestValue, string $message = ''): self
     {
         Assert::assertGreaterThanOrEqual($lowestValue, $this->value, $message);
         Assert::assertLessThanOrEqual($highestValue, $this->value, $message);

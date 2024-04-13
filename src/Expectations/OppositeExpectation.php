@@ -32,12 +32,18 @@ use PHPUnit\Framework\ExpectationFailedException;
 final class OppositeExpectation
 {
     /**
+     * @var Expectation<TValue>
+     * @readonly
+     */
+    private Expectation $original;
+    /**
      * Creates a new opposite expectation.
      *
      * @param  Expectation<TValue>  $original
      */
-    public function __construct(private readonly Expectation $original)
+    public function __construct(Expectation $original)
     {
+        $this->original = $original;
     }
 
     /**
@@ -55,7 +61,7 @@ final class OppositeExpectation
                 } else {
                     $this->original->toHaveKey($key);
                 }
-            } catch (ExpectationFailedException) {
+            } catch (ExpectationFailedException $exception) {
                 continue;
             }
 
@@ -70,7 +76,7 @@ final class OppositeExpectation
      *
      * @param  array<int, string>|string  $targets
      */
-    public function toUse(array|string $targets): ArchExpectation
+    public function toUse($targets): ArchExpectation
     {
         return GroupArchExpectation::fromExpectations($this->original, array_map(fn (string $target): SingleArchExpectation => ToUse::make($this->original, $target)->opposite(
             fn () => $this->throwExpectationFailedException('toUse', $target),
@@ -84,9 +90,9 @@ final class OppositeExpectation
     {
         return Targeted::make(
             $this->original,
-            fn (ObjectDescription $object): bool => ! str_contains((string) file_get_contents($object->path), 'declare(strict_types=1);'),
+            fn (ObjectDescription $object): bool => strpos((string) file_get_contents($object->path), 'declare(strict_types=1);') === false,
             'not to use strict types',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, '<?php')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, '<?php') !== false),
         );
     }
 
@@ -95,11 +101,17 @@ final class OppositeExpectation
      */
     public function toBeFinal(): ArchExpectation
     {
+        $enumExists = function (string $enum, bool $autoload = true) : bool {
+            if (function_exists('enum_exists')) {
+                return enum_exists($enum, $autoload);
+            }
+            return $autoload && class_exists($enum) && false;
+        };
         return Targeted::make(
             $this->original,
-            fn (ObjectDescription $object): bool => ! enum_exists($object->name) && ! $object->reflectionClass->isFinal(),
+            fn (ObjectDescription $object): bool => ! $enumExists($object->name) && ! $object->reflectionClass->isFinal(),
             'not to be final',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -108,11 +120,17 @@ final class OppositeExpectation
      */
     public function toBeReadonly(): ArchExpectation
     {
+        $enumExists = function (string $enum, bool $autoload = true) : bool {
+            if (function_exists('enum_exists')) {
+                return enum_exists($enum, $autoload);
+            }
+            return $autoload && class_exists($enum) && false;
+        };
         return Targeted::make(
             $this->original,
-            fn (ObjectDescription $object): bool => ! enum_exists($object->name) && ! $object->reflectionClass->isReadOnly() && assert(true), // @phpstan-ignore-line
+            fn (ObjectDescription $object): bool => ! $enumExists($object->name) && ! $object->reflectionClass->isReadOnly() && assert(true), // @phpstan-ignore-line
             'not to be readonly',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -125,7 +143,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->isTrait(),
             'not to be trait',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -146,7 +164,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->isAbstract(),
             'not to be abstract',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -159,7 +177,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->hasMethod($method),
             'to not have method',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -172,7 +190,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->isEnum(),
             'not to be enum',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -214,7 +232,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->isInterface(),
             'not to be interface',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -237,7 +255,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->isSubclassOf($class),
             sprintf("not to extend '%s'", $class),
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -250,7 +268,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => $object->reflectionClass->getParentClass() !== false,
             'to extend a class',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -259,7 +277,7 @@ final class OppositeExpectation
      *
      * @param  array<int, class-string>|string  $interfaces
      */
-    public function toImplement(array|string $interfaces): ArchExpectation
+    public function toImplement($interfaces): ArchExpectation
     {
         $interfaces = is_array($interfaces) ? $interfaces : [$interfaces];
 
@@ -275,7 +293,7 @@ final class OppositeExpectation
                 return true;
             },
             "not to implement '".implode("', '", $interfaces)."'",
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -288,7 +306,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => $object->reflectionClass->getInterfaceNames() !== [],
             'to implement an interface',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -296,8 +314,9 @@ final class OppositeExpectation
      * Not supported.
      *
      * @param  array<int, class-string>|string  $interfaces
+     * @return never
      */
-    public function toOnlyImplement(array|string $interfaces): never
+    public function toOnlyImplement($interfaces)
     {
         throw InvalidExpectation::fromMethods(['not', 'toOnlyImplement']);
     }
@@ -309,9 +328,9 @@ final class OppositeExpectation
     {
         return Targeted::make(
             $this->original,
-            fn (ObjectDescription $object): bool => ! str_starts_with($object->reflectionClass->getShortName(), $prefix),
+            fn (ObjectDescription $object): bool => strncmp($object->reflectionClass->getShortName(), $prefix, strlen($prefix)) !== 0,
             "not to have prefix '{$prefix}'",
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -322,9 +341,9 @@ final class OppositeExpectation
     {
         return Targeted::make(
             $this->original,
-            fn (ObjectDescription $object): bool => ! str_ends_with($object->reflectionClass->getName(), $suffix),
+            fn (ObjectDescription $object): bool => substr_compare($object->reflectionClass->getName(), $suffix, -strlen($suffix)) !== 0,
             "not to have suffix '{$suffix}'",
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 
@@ -332,16 +351,18 @@ final class OppositeExpectation
      * Not supported.
      *
      * @param  array<int, string>|string  $targets
+     * @return never
      */
-    public function toOnlyUse(array|string $targets): never
+    public function toOnlyUse($targets)
     {
         throw InvalidExpectation::fromMethods(['not', 'toOnlyUse']);
     }
 
     /**
      * Not supported.
+     * @return never
      */
-    public function toUseNothing(): never
+    public function toUseNothing()
     {
         throw InvalidExpectation::fromMethods(['not', 'toUseNothing']);
     }
@@ -359,22 +380,26 @@ final class OppositeExpectation
      *
      * @param  array<int, string>|string  $targets
      */
-    public function toBeUsedIn(array|string $targets): ArchExpectation
+    public function toBeUsedIn($targets): ArchExpectation
     {
         return GroupArchExpectation::fromExpectations($this->original, array_map(fn (string $target): GroupArchExpectation => ToBeUsedIn::make($this->original, $target)->opposite(
             fn () => $this->throwExpectationFailedException('toBeUsedIn', $target),
         ), is_string($targets) ? [$targets] : $targets));
     }
 
-    public function toOnlyBeUsedIn(): never
+    /**
+     * @return never
+     */
+    public function toOnlyBeUsedIn()
     {
         throw InvalidExpectation::fromMethods(['not', 'toOnlyBeUsedIn']);
     }
 
     /**
      * Asserts that the given expectation dependency is not used.
+     * @return never
      */
-    public function toBeUsedInNothing(): never
+    public function toBeUsedInNothing()
     {
         throw InvalidExpectation::fromMethods(['not', 'toBeUsedInNothing']);
     }
@@ -388,7 +413,7 @@ final class OppositeExpectation
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->hasMethod('__invoke'),
             'to not be invokable',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class'))
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false)
         );
     }
 
@@ -401,9 +426,9 @@ final class OppositeExpectation
     {
         return Targeted::make(
             $this->original,
-            fn (ObjectDescription $object): bool => $object->reflectionClass->getAttributes($attribute) === [],
+            fn (ObjectDescription $object): bool => (method_exists($object->reflectionClass, 'getAttributes') ? $object->reflectionClass->getAttributes($attribute) : []) === [],
             "to not have attribute '{$attribute}'",
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class'))
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false)
         );
     }
 
@@ -422,7 +447,7 @@ final class OppositeExpectation
 
             /* @phpstan-ignore-next-line */
             $this->original->{$name}(...$arguments);
-        } catch (ExpectationFailedException|AssertionFailedError) {
+        } catch (ExpectationFailedException|AssertionFailedError $exception) {
             return $this->original;
         }
 
@@ -442,7 +467,7 @@ final class OppositeExpectation
             }
 
             $this->original->{$name}; // @phpstan-ignore-line
-        } catch (ExpectationFailedException) {
+        } catch (ExpectationFailedException $exception) {
             return $this->original;
         }
 
@@ -453,20 +478,21 @@ final class OppositeExpectation
      * Creates a new expectation failed exception with a nice readable message.
      *
      * @param  array<int, mixed>|string  $arguments
+     * @return never
      */
-    public function throwExpectationFailedException(string $name, array|string $arguments = []): never
+    public function throwExpectationFailedException(string $name, $arguments = [])
     {
         $arguments = is_array($arguments) ? $arguments : [$arguments];
 
         $exporter = Exporter::default();
 
-        $toString = fn (mixed $argument): string => $exporter->shortenedExport($argument);
+        $toString = fn ($argument): string => $exporter->shortenedExport($argument);
 
         throw new ExpectationFailedException(sprintf(
             'Expecting %s not %s %s.',
             $toString($this->original->value),
             strtolower((string) preg_replace('/(?<!\ )[A-Z]/', ' $0', $name)),
-            implode(' ', array_map(fn (mixed $argument): string => $toString($argument), $arguments)),
+            implode(' ', array_map(fn ($argument): string => $toString($argument), $arguments)),
         ));
     }
 
@@ -497,7 +523,7 @@ final class OppositeExpectation
                 || ! (new \ReflectionEnum($object->name))->isBacked() // @phpstan-ignore-line
                 || (string) (new \ReflectionEnum($object->name))->getBackingType() !== $backingType, // @phpstan-ignore-line
             'not to be '.$backingType.' backed enum',
-            FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
+            FileLineFinder::where(fn (string $line): bool => strpos($line, 'class') !== false),
         );
     }
 

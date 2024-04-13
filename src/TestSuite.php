@@ -63,14 +63,13 @@ final class TestSuite
      * Holds an instance of the test suite.
      */
     private static ?TestSuite $instance = null;
-
+    public string $testPath;
     /**
      * Creates a new instance of the test suite.
      */
-    public function __construct(
-        string $rootPath,
-        public string $testPath,
-    ) {
+    public function __construct(string $rootPath, string $testPath)
+    {
+        $this->testPath = $testPath;
         $this->beforeAll = new BeforeAllRepository();
         $this->beforeEach = new BeforeEachRepository();
         $this->tests = new TestRepository();
@@ -82,14 +81,11 @@ final class TestSuite
             implode(DIRECTORY_SEPARATOR, ['.pest', 'snapshots']),
         );
     }
-
     /**
      * Returns the current instance of the test suite.
      */
-    public static function getInstance(
-        ?string $rootPath = null,
-        ?string $testPath = null,
-    ): TestSuite {
+    public static function getInstance(?string $rootPath = null, ?string $testPath = null): TestSuite
+    {
         if (is_string($rootPath) && is_string($testPath)) {
             self::$instance = new TestSuite($rootPath, $testPath);
 
@@ -99,11 +95,9 @@ final class TestSuite
 
             return self::$instance;
         }
-
         if (! self::$instance instanceof self) {
             Panic::with(new InvalidPestCommand());
         }
-
         return self::$instance;
     }
 
@@ -111,7 +105,7 @@ final class TestSuite
     {
         assert($this->test instanceof TestCase);
 
-        return (fn () => self::$__filename)->call($this->test, $this->test::class); // @phpstan-ignore-line
+        return (fn () => self::$__filename)->call($this->test, get_class($this->test)); // @phpstan-ignore-line
     }
 
     public function getDescription(): string
@@ -128,6 +122,6 @@ final class TestSuite
     {
         assert($this->test instanceof TestCase);
 
-        (fn (): string => $this->__snapshotChanges[] = $message)->call($this->test, $this->test::class); // @phpstan-ignore-line
+        (fn (): string => $this->__snapshotChanges[] = $message)->call($this->test, get_class($this->test)); // @phpstan-ignore-line
     }
 }

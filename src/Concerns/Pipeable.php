@@ -38,7 +38,7 @@ trait Pipeable
      *
      * @param  string|Closure(mixed $value, mixed ...$arguments):bool  $filter
      */
-    public function intercept(string $name, string|Closure $filter, Closure $handler): void
+    public function intercept(string $name, $filter, Closure $handler): void
     {
         if (is_string($filter)) {
             $filter = fn ($value): bool => $value instanceof $filter;
@@ -50,7 +50,7 @@ trait Pipeable
             /* @phpstan-ignore-next-line */
             if ($filter($this->value, ...$arguments)) {
                 // @phpstan-ignore-next-line
-                $handler->bindTo($this, $this::class)(...$arguments);
+                $handler->bindTo($this, get_class($this))(...$arguments);
 
                 return;
             }

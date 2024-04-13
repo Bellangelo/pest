@@ -34,8 +34,9 @@ final class Container
 
     /**
      * Gets a dependency from the container.
+     * @return object|string
      */
-    public function get(string $id): object|string
+    public function get(string $id)
     {
         if (! array_key_exists($id, $this->instances)) {
             /** @var class-string $id */
@@ -49,8 +50,9 @@ final class Container
      * Adds the given instance to the container.
      *
      * @return $this
+     * @param object|string $instance
      */
-    public function add(string $id, object|string $instance): self
+    public function add(string $id, $instance): self
     {
         $this->instances[$id] = $instance;
 
@@ -74,7 +76,7 @@ final class Container
 
             if ($constructor instanceof \ReflectionMethod) {
                 $params = array_map(
-                    function (ReflectionParameter $param) use ($id): object|string {
+                    function (ReflectionParameter $param) use ($id) {
                         $candidate = Reflection::getParameterClassName($param);
 
                         if ($candidate === null) {

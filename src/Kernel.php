@@ -42,14 +42,21 @@ final class Kernel
         Bootstrappers\BootKernelDump::class,
         Bootstrappers\BootExcludeList::class,
     ];
-
+    /**
+     * @readonly
+     */
+    private Application $application;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
     /**
      * Creates a new Kernel instance.
      */
-    public function __construct(
-        private readonly Application $application,
-        private readonly OutputInterface $output,
-    ) {
+    public function __construct(Application $application, OutputInterface $output)
+    {
+        $this->application = $application;
+        $this->output = $output;
         //
     }
 
@@ -101,7 +108,7 @@ final class Kernel
 
         try {
             $this->application->run($arguments);
-        } catch (NoDirtyTestsFound) {
+        } catch (NoDirtyTestsFound $exception) {
             $this->output->writeln([
                 '',
                 '  <fg=white;options=bold;bg=blue> INFO </> No tests found.',
@@ -158,7 +165,7 @@ final class Kernel
                 $inspector = new Inspector($throwable);
 
                 $writer->write($inspector);
-            } catch (Throwable) { // @phpstan-ignore-line
+            } catch (Throwable $exception) { // @phpstan-ignore-line
                 View::render('components.badge', [
                     'type' => 'ERROR',
                     'content' => sprintf('%s in %s:%d', $message, $file, $line),

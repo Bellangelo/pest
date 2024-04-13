@@ -63,8 +63,9 @@ final class Parallel implements HandlesArguments
 
     /**
      * Sets a global value that can be accessed by the parent process and all workers.
+     * @param string|int|bool|\Stringable $value
      */
-    public static function setGlobal(string $key, string|int|bool|Stringable $value): void
+    public static function setGlobal(string $key, $value): void
     {
         $data = ['value' => $value instanceof Stringable ? $value->__toString() : $value];
 
@@ -73,8 +74,9 @@ final class Parallel implements HandlesArguments
 
     /**
      * Returns the given global value if one has been set.
+     * @return string|int|bool|null
      */
-    public static function getGlobal(string $key): string|int|bool|null
+    public static function getGlobal(string $key)
     {
         $placesToCheck = [$_SERVER, $_ENV];
 
@@ -116,8 +118,8 @@ final class Parallel implements HandlesArguments
     private function runTestSuiteInParallel(array $arguments): int
     {
         $handlers = array_filter(
-            array_map(fn (string $handler): object|string => Container::getInstance()->get($handler), self::HANDLERS),
-            fn (object|string $handler): bool => $handler instanceof HandlesArguments,
+            array_map(fn (string $handler) => Container::getInstance()->get($handler), self::HANDLERS),
+            fn ($handler): bool => $handler instanceof HandlesArguments,
         );
 
         $filteredArguments = array_reduce(
@@ -140,8 +142,8 @@ final class Parallel implements HandlesArguments
     private function runWorkerHandlers(array $arguments): array
     {
         $handlers = array_filter(
-            array_map(fn (string $handler): object|string => Container::getInstance()->get($handler), self::HANDLERS),
-            fn (object|string $handler): bool => $handler instanceof HandlersWorkerArguments,
+            array_map(fn (string $handler) => Container::getInstance()->get($handler), self::HANDLERS),
+            fn ($handler): bool => $handler instanceof HandlersWorkerArguments,
         );
 
         return array_reduce(

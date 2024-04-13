@@ -18,8 +18,9 @@ final class InvalidExpectation extends LogicException implements ExceptionInterf
      * @param  array<int, string>  $methods
      *
      * @throws self
+     * @return never
      */
-    public static function fromMethods(array $methods): never
+    public static function fromMethods(array $methods)
     {
         throw new self(sprintf('Expectation [%s] is not valid.', implode('->', $methods)));
     }

@@ -16,13 +16,16 @@ final class Exporter
      * The maximum number of items in an array to export.
      */
     private const MAX_ARRAY_ITEMS = 3;
-
+    /**
+     * @readonly
+     */
+    private BaseExporter $exporter;
     /**
      * Creates a new Exporter instance.
      */
-    public function __construct(
-        private readonly BaseExporter $exporter,
-    ) {
+    public function __construct(BaseExporter $exporter)
+    {
+        $this->exporter = $exporter;
         // ...
     }
 
@@ -76,8 +79,9 @@ final class Exporter
 
     /**
      * Exports a value into a single-line string.
+     * @param mixed $value
      */
-    public function shortenedExport(mixed $value): string
+    public function shortenedExport($value): string
     {
         $map = [
             '#\.{3}#' => '…',

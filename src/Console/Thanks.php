@@ -28,14 +28,24 @@ final class Thanks
         'Videos' => 'https://youtube.com/@nunomaduro',
         'Sponsor' => 'https://github.com/sponsors/nunomaduro',
     ];
+    /**
+     * @readonly
+     */
+    private InputInterface $input;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
 
     /**
      * Creates a new Console Command instance.
      */
     public function __construct(
-        private readonly InputInterface $input,
-        private readonly OutputInterface $output
+        InputInterface $input,
+        OutputInterface $output
     ) {
+        $this->input = $input;
+        $this->output = $output;
         // ..
     }
 

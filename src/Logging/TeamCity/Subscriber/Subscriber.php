@@ -12,10 +12,15 @@ use Pest\Logging\TeamCity\TeamCityLogger;
 abstract class Subscriber
 {
     /**
+     * @readonly
+     */
+    private TeamCityLogger $logger;
+    /**
      * Creates a new Subscriber instance.
      */
-    public function __construct(private readonly TeamCityLogger $logger)
+    public function __construct(TeamCityLogger $logger)
     {
+        $this->logger = $logger;
     }
 
     /**

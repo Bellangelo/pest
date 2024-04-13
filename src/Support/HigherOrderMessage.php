@@ -21,6 +21,13 @@ final class HigherOrderMessage
      * @var (Closure(): bool)|null
      */
     public ?Closure $condition = null;
+    public string $filename;
+    public int $line;
+    public string $name;
+    /**
+     * @var array<int, mixed>|null
+     */
+    public ?array $arguments;
 
     /**
      * Creates a new higher order message.
@@ -28,11 +35,15 @@ final class HigherOrderMessage
      * @param  array<int, mixed>|null  $arguments
      */
     public function __construct(
-        public string $filename,
-        public int $line,
-        public string $name,
-        public ?array $arguments
+        string $filename,
+        int $line,
+        string $name,
+        ?array $arguments
     ) {
+        $this->filename = $filename;
+        $this->line = $line;
+        $this->name = $name;
+        $this->arguments = $arguments;
         // ..
     }
 
@@ -42,8 +53,9 @@ final class HigherOrderMessage
      * @template TValue of object
      *
      * @param  TValue  $target
+     * @return mixed
      */
-    public function call(object $target): mixed
+    public function call(object $target)
     {
         if (is_callable($this->condition) && call_user_func(Closure::bind($this->condition, $target)) === false) {
             return $target;
@@ -97,7 +109,7 @@ final class HigherOrderMessage
     private function getUndefinedMethodMessage(object $target, string $methodName): string
     {
         if (\PHP_MAJOR_VERSION >= 8) {
-            return sprintf(self::UNDEFINED_METHOD, sprintf('%s::%s()', $target::class, $methodName));
+            return sprintf(self::UNDEFINED_METHOD, sprintf('%s::%s()', get_class($target), $methodName));
         }
 
         return sprintf(self::UNDEFINED_METHOD, $methodName);

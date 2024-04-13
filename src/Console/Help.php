@@ -23,12 +23,17 @@ final class Help
         '  <info>--min=<fg=cyan><N></></info>                   Set the minimum required coverage percentage (<N>), and fail if not met',
         '  <info>--group=<fg=cyan><name></></info>              Only runs tests from the specified group(s)',
     ];
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
 
     /**
      * Creates a new Console Command instance.
      */
-    public function __construct(private readonly OutputInterface $output)
+    public function __construct(OutputInterface $output)
     {
+        $this->output = $output;
         // ..
     }
 

@@ -24,10 +24,10 @@ if (! function_exists('expect')) {
      *
      * @template TValue
      *
-     * @param  TValue|null  $value
+     * @param mixed $value
      * @return Expectation<TValue|null>
      */
-    function expect(mixed $value = null): Expectation
+    function expect($value = null): Expectation
     {
         return new Expectation($value);
     }
@@ -69,7 +69,7 @@ if (! function_exists('dataset')) {
      *
      * @param  Closure|iterable<int|string, mixed>  $dataset
      */
-    function dataset(string $name, Closure|iterable $dataset): void
+    function dataset(string $name, $dataset): void
     {
         $scope = DatasetInfo::scope(Backtrace::datasetsFile());
 
@@ -116,7 +116,7 @@ if (! function_exists('test')) {
      *
      * @return Expectable|TestCall|TestCase|mixed
      */
-    function test(?string $description = null, ?Closure $closure = null): HigherOrderTapProxy|TestCall
+    function test(?string $description = null, ?Closure $closure = null)
     {
         if ($description === null && TestSuite::getInstance()->test instanceof \PHPUnit\Framework\TestCase) {
             return new HigherOrderTapProxy(TestSuite::getInstance()->test);

@@ -26,13 +26,16 @@ final class BootSubscribers implements Bootstrapper
         Subscribers\EnsureKernelDumpIsFlushed::class,
         Subscribers\EnsureTeamCityEnabled::class,
     ];
-
+    /**
+     * @readonly
+     */
+    private Container $container;
     /**
      * Creates a new instance of the Boot Subscribers.
      */
-    public function __construct(
-        private readonly Container $container,
-    ) {
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
     }
 
     /**

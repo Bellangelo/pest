@@ -70,13 +70,15 @@ final class TestCaseFactory
         Concerns\Testable::class,
         Concerns\Expectable::class,
     ];
+    public string $filename;
 
     /**
      * Creates a new Factory instance.
      */
     public function __construct(
-        public string $filename
+        string $filename
     ) {
+        $this->filename = $filename;
         $this->bootHigherOrderable();
     }
 

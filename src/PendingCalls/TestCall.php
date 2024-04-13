@@ -32,23 +32,35 @@ final class TestCall
 
     /**
      * The Test Case Factory.
+     * @readonly
      */
-    public readonly TestCaseMethodFactory $testCaseMethod;
+    public TestCaseMethodFactory $testCaseMethod;
 
     /**
      * If test call is descriptionLess.
+     * @readonly
      */
-    private readonly bool $descriptionLess;
+    private bool $descriptionLess;
+    /**
+     * @readonly
+     */
+    private TestSuite $testSuite;
+    /**
+     * @readonly
+     */
+    private string $filename;
 
     /**
      * Creates a new Pending Call.
      */
     public function __construct(
-        private readonly TestSuite $testSuite,
-        private readonly string $filename,
+        TestSuite $testSuite,
+        string $filename,
         ?string $description = null,
         ?Closure $closure = null
     ) {
+        $this->testSuite = $testSuite;
+        $this->filename = $filename;
         $this->testCaseMethod = new TestCaseMethodFactory($filename, $description, $closure);
 
         $this->descriptionLess = $description === null;
@@ -68,8 +80,9 @@ final class TestCall
 
     /**
      * Asserts that the test throws the given `$exceptionClass` when called.
+     * @param string|int $exception
      */
-    public function throws(string|int $exception, ?string $exceptionMessage = null, ?int $exceptionCode = null): self
+    public function throws($exception, ?string $exceptionMessage = null, ?int $exceptionCode = null): self
     {
         if (is_int($exception)) {
             $exceptionCode = $exception;
@@ -100,8 +113,9 @@ final class TestCall
      * Asserts that the test throws the given `$exceptionClass` when called if the given condition is true.
      *
      * @param  (callable(): bool)|bool  $condition
+     * @param string|int $exception
      */
-    public function throwsIf(callable|bool $condition, string|int $exception, ?string $exceptionMessage = null, ?int $exceptionCode = null): self
+    public function throwsIf($condition, $exception, ?string $exceptionMessage = null, ?int $exceptionCode = null): self
     {
         $condition = is_callable($condition)
             ? $condition
@@ -118,8 +132,9 @@ final class TestCall
      * Asserts that the test throws the given `$exceptionClass` when called if the given condition is false.
      *
      * @param  (callable(): bool)|bool  $condition
+     * @param string|int $exception
      */
-    public function throwsUnless(callable|bool $condition, string|int $exception, ?string $exceptionMessage = null, ?int $exceptionCode = null): self
+    public function throwsUnless($condition, $exception, ?string $exceptionMessage = null, ?int $exceptionCode = null): self
     {
         $condition = is_callable($condition)
             ? $condition
@@ -138,7 +153,7 @@ final class TestCall
      *
      * @param  array<\Closure|iterable<int|string, mixed>|string>  $data
      */
-    public function with(Closure|iterable|string ...$data): self
+    public function with(...$data): self
     {
         foreach ($data as $dataset) {
             $this->testCaseMethod->datasets[] = $dataset;
@@ -183,8 +198,9 @@ final class TestCall
 
     /**
      * Skips the current test.
+     * @param \Closure|bool|string $conditionOrMessage
      */
-    public function skip(Closure|bool|string $conditionOrMessage = true, string $message = ''): self
+    public function skip($conditionOrMessage = true, string $message = ''): self
     {
         $condition = is_string($conditionOrMessage)
             ? NullClosure::create()
@@ -217,10 +233,10 @@ final class TestCall
             throw new InvalidArgumentException('The version must start with [<] or [>].');
         }
 
-        if (str_starts_with($version, '>=') || str_starts_with($version, '<=')) {
+        if (strncmp($version, '>=', strlen('>=')) === 0 || strncmp($version, '<=', strlen('<=')) === 0) {
             $operator = substr($version, 0, 2);
             $version = substr($version, 2);
-        } elseif (str_starts_with($version, '>') || str_starts_with($version, '<')) {
+        } elseif (strncmp($version, '>', strlen('>')) === 0 || strncmp($version, '<', strlen('<')) === 0) {
             $operator = $version[0];
             $version = substr($version, 1);
             // ensure starts with number:

@@ -32,15 +32,30 @@ final class Init implements HandlesArguments
         'Unit/ExampleTest.php.stub' => 'tests/Unit/ExampleTest.php',
         'Feature/ExampleTest.php.stub' => 'tests/Feature/ExampleTest.php',
     ];
+    /**
+     * @readonly
+     */
+    private TestSuite $testSuite;
+    /**
+     * @readonly
+     */
+    private InputInterface $input;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
 
     /**
      * Creates a new Plugin instance.
      */
     public function __construct(
-        private readonly TestSuite $testSuite,
-        private readonly InputInterface $input,
-        private readonly OutputInterface $output
+        TestSuite $testSuite,
+        InputInterface $input,
+        OutputInterface $output
     ) {
+        $this->testSuite = $testSuite;
+        $this->input = $input;
+        $this->output = $output;
         // ..
     }
 

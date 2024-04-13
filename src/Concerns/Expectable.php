@@ -16,10 +16,10 @@ trait Expectable
      *
      * Creates a new Expectation.
      *
-     * @param  TValue  $value
+     * @param mixed $value
      * @return Expectation<TValue>
      */
-    public function expect(mixed $value): Expectation
+    public function expect($value): Expectation
     {
         return new Expectation($value);
     }

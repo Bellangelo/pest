@@ -12,19 +12,22 @@ use ReflectionClass;
  */
 final class HigherOrderTapProxy
 {
+    public TestCase $target;
     /**
      * Create a new tap proxy instance.
      */
     public function __construct(
-        public TestCase $target
+        TestCase $target
     ) {
+        $this->target = $target;
         // ..
     }
 
     /**
      * Dynamically sets properties on the target.
+     * @param mixed $value
      */
-    public function __set(string $property, mixed $value): void
+    public function __set(string $property, $value): void
     {
         $this->target->{$property} = $value; // @phpstan-ignore-line
     }
@@ -42,7 +45,7 @@ final class HigherOrderTapProxy
 
         $className = (new ReflectionClass($this->target))->getName();
 
-        if (str_starts_with($className, 'P\\')) {
+        if (strncmp($className, 'P\\', strlen('P\\')) === 0) {
             $className = substr($className, 2);
         }
 

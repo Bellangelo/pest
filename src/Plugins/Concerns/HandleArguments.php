@@ -21,7 +21,7 @@ trait HandleArguments
                 return true;
             }
 
-            if (str_starts_with($arg, "$argument=")) {
+            if (strncmp($arg, "$argument=", strlen("$argument=")) === 0) {
                 return true;
             }
         }

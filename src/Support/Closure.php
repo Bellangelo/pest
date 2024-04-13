@@ -17,8 +17,9 @@ final class Closure
      *
      *
      * @throws ShouldNotHappen
+     * @param object|string|null $newScope
      */
-    public static function bind(?BaseClosure $closure, ?object $newThis, object|string|null $newScope = 'static'): BaseClosure
+    public static function bind(?BaseClosure $closure, ?object $newThis, $newScope = 'static'): BaseClosure
     {
         if ($closure == null) {
             throw ShouldNotHappen::fromMessage('Could not bind null closure.');

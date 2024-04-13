@@ -24,13 +24,17 @@ final class ExpectationPipeline
      * @var array<array-key, mixed>
      */
     private array $passables;
+    /**
+     * @readonly
+     */
+    private Closure $closure;
 
     /**
      * Creates a new instance of Expectation Pipeline.
      */
-    public function __construct(
-        private readonly Closure $closure
-    ) {
+    public function __construct(Closure $closure)
+    {
+        $this->closure = $closure;
     }
 
     /**
@@ -43,8 +47,9 @@ final class ExpectationPipeline
 
     /**
      * Sets the list of passables.
+     * @param mixed ...$passables
      */
-    public function send(mixed ...$passables): self
+    public function send(...$passables): self
     {
         $this->passables = $passables;
 
@@ -84,6 +89,6 @@ final class ExpectationPipeline
      */
     public function carry(): Closure
     {
-        return fn (mixed $stack, callable $pipe): Closure => fn () => $pipe($stack, ...$this->passables);
+        return fn ($stack, callable $pipe): Closure => fn () => $pipe($stack, ...$this->passables);
     }
 }

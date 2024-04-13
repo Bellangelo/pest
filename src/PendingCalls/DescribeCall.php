@@ -17,16 +17,36 @@ final class DescribeCall
      * The current describe call.
      */
     private static ?string $describing = null;
+    /**
+     * @readonly
+     */
+    public TestSuite $testSuite;
+    /**
+     * @readonly
+     */
+    public string $filename;
+    /**
+     * @readonly
+     */
+    public string $description;
+    /**
+     * @readonly
+     */
+    public Closure $tests;
 
     /**
      * Creates a new Pending Call.
      */
     public function __construct(
-        public readonly TestSuite $testSuite,
-        public readonly string $filename,
-        public readonly string $description,
-        public readonly Closure $tests
+        TestSuite $testSuite,
+        string $filename,
+        string $description,
+        Closure $tests
     ) {
+        $this->testSuite = $testSuite;
+        $this->filename = $filename;
+        $this->description = $description;
+        $this->tests = $tests;
         //
     }
 

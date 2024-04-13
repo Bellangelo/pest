@@ -40,7 +40,7 @@ final class DatasetsRepository
      *
      * @param  Closure|iterable<int|string, mixed>  $data
      */
-    public static function set(string $name, Closure|iterable $data, string $scope): void
+    public static function set(string $name, $data, string $scope): void
     {
         $datasetKey = "$scope".self::SEPARATOR."$name";
 
@@ -71,7 +71,7 @@ final class DatasetsRepository
      *
      * @throws ShouldNotHappen
      */
-    public static function get(string $filename, string $description): Closure|array
+    public static function get(string $filename, string $description)
     {
         $dataset = self::$withs[$filename.self::SEPARATOR.$description];
 
@@ -180,7 +180,7 @@ final class DatasetsRepository
     /**
      * @return Closure|iterable<int|string, mixed>
      */
-    private static function getScopedDataset(string $name, string $currentTestFile): Closure|iterable
+    private static function getScopedDataset(string $name, string $currentTestFile)
     {
         $matchingDatasets = array_filter(self::$datasets, function (string $key) use ($name, $currentTestFile): bool {
             [$datasetScope, $datasetName] = explode(self::SEPARATOR, $key);
@@ -189,12 +189,12 @@ final class DatasetsRepository
                 return false;
             }
 
-            return str_starts_with($currentTestFile, $datasetScope);
+            return strncmp($currentTestFile, $datasetScope, strlen($datasetScope)) === 0;
         }, ARRAY_FILTER_USE_KEY);
 
         $closestScopeDatasetKey = array_reduce(
             array_keys($matchingDatasets),
-            fn (string|int|null $keyA, string|int|null $keyB): string|int|null => $keyA !== null && strlen((string) $keyA) > strlen((string) $keyB) ? $keyA : $keyB
+            fn ($keyA, $keyB) => $keyA !== null && strlen((string) $keyA) > strlen((string) $keyB) ? $keyA : $keyB
         );
 
         if ($closestScopeDatasetKey === null) {
@@ -227,8 +227,9 @@ final class DatasetsRepository
 
     /**
      * @param  array<int, mixed>  $data
+     * @param int|string $key
      */
-    private static function getDatasetDescription(int|string $key, array $data): string
+    private static function getDatasetDescription($key, array $data): string
     {
         $exporter = Exporter::default();
 

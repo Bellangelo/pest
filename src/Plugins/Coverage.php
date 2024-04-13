@@ -36,12 +36,17 @@ final class Coverage implements AddsOutput, HandlesArguments
      * The minimum coverage.
      */
     public float $coverageMin = 0.0;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
 
     /**
      * Creates a new Plugin instance.
      */
-    public function __construct(private readonly OutputInterface $output)
+    public function __construct(OutputInterface $output)
     {
+        $this->output = $output;
         // ..
     }
 

@@ -29,7 +29,7 @@ final class AfterEachRepository
             $fromAfterEachTestCase = $this->state[$filename];
 
             $afterEachTestCase = ChainableClosure::bound($fromAfterEachTestCase, $afterEachTestCase)
-                ->bindTo($afterEachCall, $afterEachCall::class);
+                ->bindTo($afterEachCall, get_class($afterEachCall));
         }
 
         assert($afterEachTestCase instanceof Closure);

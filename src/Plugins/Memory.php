@@ -19,13 +19,18 @@ final class Memory implements AddsOutput, HandlesArguments
      * If memory should be displayed.
      */
     private bool $enabled = false;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
 
     /**
      * Creates a new Plugin instance.
      */
     public function __construct(
-        private readonly OutputInterface $output
+        OutputInterface $output
     ) {
+        $this->output = $output;
         // ..
     }
 

@@ -36,8 +36,9 @@ final class ResultPrinter
 
     /**
      * The "native" printer.
+     * @readonly
      */
-    public readonly Printer $printer;
+    public Printer $printer;
 
     /**
      * The state.
@@ -46,33 +47,47 @@ final class ResultPrinter
 
     /**
      * The "compact" printer.
+     * @readonly
      */
-    private readonly CompactPrinter $compactPrinter;
+    private CompactPrinter $compactPrinter;
 
     /** @var resource|null */
     private $teamcityLogFileHandle;
 
     /** @var array<non-empty-string, int> */
     private array $tailPositions;
+    /**
+     * @readonly
+     */
+    private OutputInterface $output;
+    /**
+     * @readonly
+     */
+    private Options $options;
 
     public function __construct(
-        private readonly OutputInterface $output,
-        private readonly Options $options
+        OutputInterface $output,
+        Options $options
     ) {
+        $this->output = $output;
+        $this->options = $options;
         $this->printer = new class($this->output) implements Printer
         {
-            public function __construct(
-                private readonly OutputInterface $output,
-            ) {
+            /**
+             * @readonly
+             */
+            private OutputInterface $output;
+            public function __construct(OutputInterface $output)
+            {
+                $this->output = $output;
             }
-
             public function print(string $buffer): void
             {
                 $buffer = OutputFormatter::escape($buffer);
-                if (str_starts_with($buffer, "\nGenerating code coverage report")) {
+                if (strncmp($buffer, "\nGenerating code coverage report", strlen("\nGenerating code coverage report")) === 0) {
                     return;
                 }
-                if (str_starts_with($buffer, 'done [')) {
+                if (strncmp($buffer, 'done [', strlen('done [')) === 0) {
                     return;
                 }
 

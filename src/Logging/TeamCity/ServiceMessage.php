@@ -10,21 +10,30 @@ namespace Pest\Logging\TeamCity;
 final class ServiceMessage
 {
     private static ?int $flowId = null;
-
+    /**
+     * @readonly
+     */
+    private string $type;
+    /**
+     * @var array<string, (string | int | null)>
+     * @readonly
+     */
+    private array $parameters;
     /**
      * @param  array<string, string|int|null>  $parameters
      */
-    public function __construct(
-        private readonly string $type,
-        private readonly array $parameters,
-    ) {
+    public function __construct(string $type, array $parameters)
+    {
+        $this->type = $type;
+        $this->parameters = $parameters;
     }
 
     public function toString(): string
     {
         $paramsToString = '';
+        $item0Unpacked = $this->parameters;
 
-        foreach ([...$this->parameters, 'flowId' => self::$flowId] as $key => $value) {
+        foreach (array_merge($item0Unpacked, ['flowId' => self::$flowId]) as $key => $value) {
             $value = $this->escapeServiceMessage((string) $value);
             $paramsToString .= " $key='$value'";
         }
@@ -75,7 +84,7 @@ final class ServiceMessage
 
     public static function testStdOut(string $name, string $data): self
     {
-        if (! str_ends_with($data, "\n")) {
+        if (substr_compare($data, "\n", -strlen("\n")) !== 0) {
             $data .= "\n";
         }
 
@@ -96,7 +105,7 @@ final class ServiceMessage
 
     public static function testStdErr(string $name, string $data): self
     {
-        if (! str_ends_with($data, "\n")) {
+        if (substr_compare($data, "\n", -strlen("\n")) !== 0) {
             $data .= "\n";
         }
 

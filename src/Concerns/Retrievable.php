@@ -15,11 +15,11 @@ trait Retrievable
      * Safely retrieve the value at the given key from an object or array.
      * @template TRetrievableValue
      *
-     * @param  array<string, TRetrievableValue>|object  $value
-     * @param  TRetrievableValue|null  $default
+     * @param mixed $value
+     * @param mixed $default
      * @return TRetrievableValue|null
      */
-    private function retrieve(string $key, mixed $value, mixed $default = null): mixed
+    private function retrieve(string $key, $value, $default = null)
     {
         if (is_array($value)) {
             return $value[$key] ?? $default;

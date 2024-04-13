@@ -25,8 +25,9 @@ final class Reflection
      * Calls the given method with args on the given object.
      *
      * @param  array<int, mixed>  $args
+     * @return mixed
      */
-    public static function call(object $object, string $method, array $args = []): mixed
+    public static function call(object $object, string $method, array $args = [])
     {
         $reflectionClass = new ReflectionClass($object);
 
@@ -53,8 +54,9 @@ final class Reflection
      * Bind a callable to the TestCase and return the result.
      *
      * @param  array<int, mixed>  $args
+     * @return mixed
      */
-    public static function bindCallable(callable $callable, array $args = []): mixed
+    public static function bindCallable(callable $callable, array $args = [])
     {
         return Closure::fromCallable($callable)->bindTo(TestSuite::getInstance()->test)(...$args);
     }
@@ -62,8 +64,9 @@ final class Reflection
     /**
      * Bind a callable to the TestCase and return the result,
      * passing in the current dataset values as arguments.
+     * @return mixed
      */
-    public static function bindCallableWithData(callable $callable): mixed
+    public static function bindCallableWithData(callable $callable)
     {
         $test = TestSuite::getInstance()->test;
 
@@ -92,8 +95,9 @@ final class Reflection
 
     /**
      * Gets the property value from of the given object.
+     * @return mixed
      */
-    public static function getPropertyValue(object $object, string $property): mixed
+    public static function getPropertyValue(object $object, string $property)
     {
         $reflectionClass = new ReflectionClass($object);
 
@@ -123,8 +127,9 @@ final class Reflection
      * @template TValue of object
      *
      * @param  TValue  $object
+     * @param mixed $value
      */
-    public static function setPropertyValue(object $object, string $property, mixed $value): void
+    public static function setPropertyValue(object $object, string $property, $value): void
     {
         /** @var ReflectionClass<TValue> $reflectionClass */
         $reflectionClass = new ReflectionClass($object);
@@ -209,7 +214,10 @@ final class Reflection
         return $arguments;
     }
 
-    public static function getFunctionVariable(Closure $function, string $key): mixed
+    /**
+     * @return mixed
+     */
+    public static function getFunctionVariable(Closure $function, string $key)
     {
         return (new ReflectionFunction($function))->getStaticVariables()[$key] ?? null;
     }

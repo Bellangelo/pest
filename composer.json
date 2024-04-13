@@ -1,6 +1,6 @@
 {
-    "name": "pestphp/pest",
-    "description": "The elegant PHP Testing Framework.",
+    "name": "bellangelo/pest",
+    "description": "The elegant PHP Testing Framework made run for php7.4.",
     "keywords": [
         "php",
         "framework",
@@ -12,12 +12,12 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Nuno Maduro",
-            "email": "enunomaduro@gmail.com"
+            "name": "Aggelos Bellos",
+            "email": "aggelosbellos7@gmail.com"
         }
     ],
     "require": {
-        "php": "^8.1.0",
+        "php": "^7.4.0",
         "brianium/paratest": "^7.3.1",
         "nunomaduro/collision": "^7.10.0|^8.1.1",
         "nunomaduro/termwind": "^1.15.1|^2.0.1",

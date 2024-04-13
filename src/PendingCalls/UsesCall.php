@@ -40,6 +40,15 @@ final class UsesCall
      * @var array<int, string>
      */
     private array $groups = [];
+    /**
+     * @readonly
+     */
+    private string $filename;
+    /**
+     * @var array<int, string>
+     * @readonly
+     */
+    private array $classAndTraits;
 
     /**
      * Creates a new Pending Call.
@@ -47,9 +56,11 @@ final class UsesCall
      * @param  array<int, string>  $classAndTraits
      */
     public function __construct(
-        private readonly string $filename,
-        private readonly array $classAndTraits
+        string $filename,
+        array $classAndTraits
     ) {
+        $this->filename = $filename;
+        $this->classAndTraits = $classAndTraits;
         $this->targets = [$filename];
     }
 
@@ -75,7 +86,7 @@ final class UsesCall
                 $startChar = strtolower((string) preg_replace('~^([a-z]+:\\\).*$~i', '$1', __DIR__));
             }
 
-            return str_starts_with($path, $startChar)
+            return strncmp($path, $startChar, strlen($startChar)) === 0
                 ? $path
                 : implode(DIRECTORY_SEPARATOR, [
                     dirname($this->filename),

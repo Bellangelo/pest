@@ -18,14 +18,20 @@ use function expect;
 final class EachExpectation
 {
     private bool $opposite = false;
+    /**
+     * @var Expectation<TValue>
+     * @readonly
+     */
+    private Expectation $original;
 
     /**
      * Creates an expectation on each item of the iterable "value".
      *
      * @param  Expectation<TValue>  $original
      */
-    public function __construct(private readonly Expectation $original)
+    public function __construct(Expectation $original)
     {
+        $this->original = $original;
     }
 
     /**
@@ -33,10 +39,10 @@ final class EachExpectation
      *
      * @template TAndValue
      *
-     * @param  TAndValue  $value
+     * @param mixed $value
      * @return Expectation<TAndValue>
      */
-    public function and(mixed $value): Expectation
+    public function and($value): Expectation
     {
         return $this->original->and($value);
     }

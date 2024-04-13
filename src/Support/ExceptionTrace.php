@@ -19,8 +19,9 @@ final class ExceptionTrace
      * Ensures the given closure reports the good execution context.
      *
      * @throws Throwable
+     * @return mixed
      */
-    public static function ensure(Closure $closure): mixed
+    public static function ensure(Closure $closure)
     {
         try {
             return $closure();

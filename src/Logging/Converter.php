@@ -28,14 +28,20 @@ final class Converter
 {
     private const PREFIX = 'P\\';
 
-    private readonly StateGenerator $stateGenerator;
-
+    /**
+     * @readonly
+     */
+    private StateGenerator $stateGenerator;
+    /**
+     * @readonly
+     */
+    private string $rootPath;
     /**
      * Creates a new instance of the Converter.
      */
-    public function __construct(
-        private readonly string $rootPath,
-    ) {
+    public function __construct(string $rootPath)
+    {
+        $this->rootPath = $rootPath;
         $this->stateGenerator = new StateGenerator();
     }
 
@@ -143,7 +149,7 @@ final class Converter
     {
         $name = $testSuite->name();
 
-        if (! str_starts_with($name, self::PREFIX)) {
+        if (strncmp($name, self::PREFIX, strlen(self::PREFIX)) !== 0) {
             return $name;
         }
 
@@ -213,7 +219,7 @@ final class Converter
         $numberOfNotPassedTests = count(
             array_unique(
                 array_map(
-                    function (BeforeFirstTestMethodErrored|Errored|Failed|Skipped|ConsideredRisky|MarkedIncomplete $event): string {
+                    function ($event): string {
                         if ($event instanceof BeforeFirstTestMethodErrored) {
                             return $event->testClassName();
                         }

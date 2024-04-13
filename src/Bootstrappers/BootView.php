@@ -14,11 +14,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class BootView implements Bootstrapper
 {
     /**
+     * @readonly
+     */
+    private OutputInterface $output;
+    /**
      * Creates a new instance of the Boot View.
      */
     public function __construct(
-        private readonly OutputInterface $output
+        OutputInterface $output
     ) {
+        $this->output = $output;
         // ..
     }
 

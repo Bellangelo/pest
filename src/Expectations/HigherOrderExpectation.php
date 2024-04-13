@@ -23,20 +23,26 @@ final class HigherOrderExpectation
     /**
      * @var Expectation<TValue>|EachExpectation<TValue>
      */
-    private Expectation|EachExpectation $expectation;
+    private $expectation;
 
     private bool $opposite = false;
 
     private bool $shouldReset = false;
+    /**
+     * @var Expectation<TOriginalValue>
+     * @readonly
+     */
+    private Expectation $original;
 
     /**
      * Creates a new higher order expectation.
      *
      * @param  Expectation<TOriginalValue>  $original
-     * @param  TValue  $value
+     * @param mixed $value
      */
-    public function __construct(private readonly Expectation $original, mixed $value)
+    public function __construct(Expectation $original, $value)
     {
+        $this->original = $original;
         $this->expectation = $this->expect($value);
     }
 
@@ -57,10 +63,10 @@ final class HigherOrderExpectation
      *
      * @template TExpectValue
      *
-     * @param  TExpectValue  $value
+     * @param mixed $value
      * @return Expectation<TExpectValue>
      */
-    public function expect(mixed $value): Expectation
+    public function expect($value): Expectation
     {
         return new Expectation($value);
     }
@@ -70,10 +76,10 @@ final class HigherOrderExpectation
      *
      * @template TExpectValue
      *
-     * @param  TExpectValue  $value
+     * @param mixed $value
      * @return Expectation<TExpectValue>
      */
-    public function and(mixed $value): Expectation
+    public function and($value): Expectation
     {
         return $this->expect($value);
     }
@@ -159,7 +165,7 @@ final class HigherOrderExpectation
      *
      * @return TOriginalValue|TValue
      */
-    private function getValue(): mixed
+    private function getValue()
     {
         return $this->shouldReset ? $this->original->value : $this->expectation->value;
     }

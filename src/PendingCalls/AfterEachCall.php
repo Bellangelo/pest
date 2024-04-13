@@ -21,22 +21,34 @@ final class AfterEachCall
 
     /**
      * The "afterEach" closure.
+     * @readonly
      */
-    private readonly Closure $closure;
+    private Closure $closure;
 
     /**
      * The calls that should be proxied.
+     * @readonly
      */
-    private readonly HigherOrderMessageCollection $proxies;
+    private HigherOrderMessageCollection $proxies;
+    /**
+     * @readonly
+     */
+    private TestSuite $testSuite;
+    /**
+     * @readonly
+     */
+    private string $filename;
 
     /**
      * Creates a new Pending Call.
      */
     public function __construct(
-        private readonly TestSuite $testSuite,
-        private readonly string $filename,
+        TestSuite $testSuite,
+        string $filename,
         ?Closure $closure = null
     ) {
+        $this->testSuite = $testSuite;
+        $this->filename = $filename;
         $this->closure = $closure instanceof Closure ? $closure : NullClosure::create();
 
         $this->proxies = new HigherOrderMessageCollection();

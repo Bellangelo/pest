@@ -11,27 +11,7 @@
 ------
 **Pest** is an elegant PHP testing Framework with a focus on simplicity, meticulously designed to bring back the joy of testing in PHP.
 
-- Explore our docs at **[pestphp.com »](https://pestphp.com)**
-- Follow us on Twitter at **[@pestphp »](https://twitter.com/pestphp)**
-- Join us at **[discord.gg/kaHY6p54JH »](https://discord.gg/kaHY6p54JH)** or **[t.me/+kYH5G4d5MV83ODk0 »](https://t.me/+kYH5G4d5MV83ODk0)**
+This is a fork of the https://github.com/pestphp/pest that is transpiled to PHP 7.4.
 
-## Sponsors
-
-We cannot thank our sponsors enough for their incredible support in funding Pest's development. Their contributions have been instrumental in making Pest the best it can be. For those who are interested in becoming a sponsor, please visit Nuno Maduro's Sponsor page at **[github.com/sponsors/nunomaduro](https://github.com/sponsors/nunomaduro)**.
-
-### Platinum Sponsors
-
-- **[LaraJobs](https://larajobs.com)**
-- **[Forge](https://forge.laravel.com)**
-- **[Spatie](https://spatie.be)**
-- **[Worksome](https://www.worksome.com/)**
-
-### Premium Sponsors
-
-- [Akaunting](https://akaunting.com/?ref=pestphp)
-- [Codecourse](https://codecourse.com/?ref=pestphp)
-- [Laracasts](https://laracasts.com/?ref=pestphp)
-- [Localazy](https://localazy.com/?ref=pestphp)
-- [Zapiet](https://www.zapiet.com/?ref=pestphp)
 
 Pest is an open-sourced software licensed under the **[MIT license](https://opensource.org/licenses/MIT)**.
